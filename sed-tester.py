@@ -35,7 +35,7 @@ def main():
 		
 	def upinp():
 		# update  inp file data
-		cmd = editor.copy # make a copy so the original editor var doesnt get updated
+		cmd = editor.copy() # make a copy so the original editor var doesnt get updated
 		cmd.extend([inpfile])
 		subprocess.run(cmd)
 		
@@ -58,7 +58,6 @@ def main():
 		print("===> INPUT DATA:")
 		prinp(wait=False)
 		print("===> END.")
-		input()
 	
 	def runss():
 		# print sed script and input
@@ -67,7 +66,6 @@ def main():
 		print("\n===> SED OUTPUT:")
 		subprocess.run(["sed", "-f", sedscriptfile, inpfile])
 		print("===> END SED OUTPUT.\n\n")
-		input() # just dont display the menu immediately
 		
 	def runssc(cargs):
 		# cargs must be a string e.g. "" or "-n" or "-arg1,-arg2" 
@@ -85,7 +83,6 @@ def main():
 		print("\n===> SED OUTPUT:")
 		subprocess.run(cmd)
 		print("===> END SED OUTPUT.\n\n---")
-		input()
 
 		
 	while (True):
@@ -95,8 +92,10 @@ def main():
 		q += "\n2. update sed script"
 		q += "\n3. Update input data"
 		q += "\n4. Run sed"
-		q += "\n5. Run sed, custom flags (except -f)"
+		q += "\n5. Run sed -n"
 		q += "\nx. Type \'x\' to quit"
+		valid_start_opt_int = 1
+		valid_end_opt_int = 5
 		print(q)
 		try:
 			c = input("Enter choice: ")
@@ -114,7 +113,7 @@ def main():
 
 		try:
 			c = int(c)
-			if c<1 or c>5:
+			if c<valid_start_opt_int or c>valid_end_opt_int:
 				raise InvalidChoiceError("")
 		except (ValueError, InvalidChoiceError):
 			print("\nInvalid choice. ",end='')
@@ -122,15 +121,18 @@ def main():
 		
 		if c==1:
 			prssninp()
+			input() # just dont display the menu immediately
 		if c==2:
 			upss()
 		if c==3:
 			upinp()
 		if c ==4:
 			runss()
+			input() # just dont display the menu immediately
 		if c==5:
-			sedargs = input("Enter seprated list of args for sed\n (except -f) e.g. \'-n\':")
+			sedargs = "-n" #input("Enter seprated list of args for sed\n (except -f) e.g. \'-n\':")
 			runssc(sedargs)
+			input() # just dont display the menu immediately
 			
 
 # call main function
