@@ -58,6 +58,7 @@ def main():
 		print("===> INPUT DATA:")
 		prinp(wait=False)
 		print("===> END.")
+		input()
 	
 	def runss():
 		# print sed script and input
