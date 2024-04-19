@@ -22,7 +22,7 @@ def main():
 		os.makedirs(datadir)
 	sedscriptfile = os.path.join(datadir,"sed-script.sed")
 	inpfile = os.path.join(datadir,"sed-input.txt")
-	editor = ["vim"] # editior with optional cli args e.g. 
+	editor = ["vim"] # editor with optional cli args e.g. 
 	                   # ["vim","-S"] or ["vim"] or ["gedit"] or ["nano"] etc.
 	                   #use cli editors as gui editors loose focus
 	
@@ -38,25 +38,40 @@ def main():
 		cmd = editor.copy() # make a copy so the original editor var doesnt get updated
 		cmd.extend([inpfile])
 		subprocess.run(cmd)
+	
+	def upssandinp():
+		#update sed script and input file together
+		vim_hopen_opt = "-o"
+		vim_vopen_opt = "-O"
+		vim_extra_opts = ["-c",":set numbers", "-c", ":bo term"]
+		act_vim_open_opt = vim_vopen_opt
+		if "vim" in editor:
+			cmd = editor.copy()
+			cmd.extend(vim_extra_opts)
+			cmd.extend([act_vim_open_opt, sedscriptfile, act_vim_open_opt, inpfile])
+			subprocess.run(cmd)
+		else:
+			print("Sorry, this option only available for vim as editor.")
+			print("Try using options 2 or 3.")
 		
 	def prss(wait=False):
 		# print sed script
 		subprocess.run(["cat", sedscriptfile])
-		if (wait==True):
+		if (wait == True):
 			input("EOF. Press a key to continue...")
 	
 	def prinp(wait=False):
 		# print sed script
 		subprocess.run(["cat", inpfile])
-		if (wait==True):
+		if (wait == True):
 			input("EOF. Press a key to continue...")
 		
 	def prssninp():
 		# print sed script and input
 		print("\n===> SED SCRIPT:")
-		prss(wait=False)
+		prss(wait = False)
 		print("===> INPUT DATA:")
-		prinp(wait=False)
+		prinp(wait = False)
 		print("===> END.")
 	
 	def runss():
@@ -84,6 +99,8 @@ def main():
 		subprocess.run(cmd)
 		print("===> END SED OUTPUT.\n\n---")
 
+	def runssdebug():
+		pass
 		
 	while (True):
 		print("")
@@ -91,15 +108,18 @@ def main():
 		q += "\n1. Print sed script & input data"
 		q += "\n2. update sed script"
 		q += "\n3. Update input data"
-		q += "\n4. Run sed"
-		q += "\n5. Run sed -n"
-		q += "\nx. Type \'x\' to quit"
+		q += "\n4. Update script and input data"
+		q += "\n5. Run sed"
+		q += "\n6. Run sed -n"
+		q += "\n7. Run sed -l"
+		q += "\n8. Run sed --debug"
+		q += "\nx. Type \'x\' or \'q\' to quit"
 		valid_start_opt_int = 1
-		valid_end_opt_int = 5
+		valid_end_opt_int = 8
 		print(q)
 		try:
 			c = input("Enter choice: ")
-			if c == "x":
+			if c in ["x","q"]:
 				raise NormalExitException("")
 		except (EOFError,KeyboardInterrupt, NormalExitException) as e:
 			if type(e) == EOFError:
@@ -119,18 +139,28 @@ def main():
 			print("\nInvalid choice. ",end='')
 			continue
 		
-		if c==1:
+		if c == 1:
 			prssninp()
 			input() # just dont display the menu immediately
-		if c==2:
-			upss()
-		if c==3:
+		if c == 2:
+			upss()		
+		if c == 3:
 			upinp()
-		if c ==4:
+		if c == 4:
+			upssandinp()
+		if c == 5:
 			runss()
 			input() # just dont display the menu immediately
-		if c==5:
+		if c == 6:
 			sedargs = "-n" #input("Enter seprated list of args for sed\n (except -f) e.g. \'-n\':")
+			runssc(sedargs)
+			input() # just dont display the menu immediately
+		if c == 7:
+			sedargs = "-e l" #input("Enter seprated list of args for sed\n (except -f) e.g. \'-n\':")
+			runssc(sedargs)
+			input() # just dont display the menu immediately
+		if c == 8:
+			sedargs = "--debug" #input("Enter seprated list of args for sed\n (except -f) e.g. \'-n\':")
 			runssc(sedargs)
 			input() # just dont display the menu immediately
 			
